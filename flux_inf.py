@@ -1,5 +1,3 @@
-from datetime import date
-from custom_nodes.FaceAnalysis.faceanalysis import FaceAlign
 from .resampler import Resampler
 import os
 from comfy import model_management
@@ -34,7 +32,7 @@ INSIGHTFACE_DIR = folder_paths.get_folder_paths("insightface")[0]
 FACEXLIB_DIR = folder_paths.get_folder_paths("facexlib")[0]
 INFUSE_YOU_DIR = folder_paths.get_folder_paths("inf-you")[0]
 
-def load_image_proj_model(device, dtype, image_proj_num_tokens=8):
+def load_image_proj_model(proj_model_name, device, dtype, image_proj_num_tokens=8):
         # Load image proj model
         num_tokens = image_proj_num_tokens
         image_emb_dim = 512
@@ -48,7 +46,7 @@ def load_image_proj_model(device, dtype, image_proj_num_tokens=8):
             output_dim=4096,
             ff_mult=4,
         )
-        image_proj_model_path = os.path.join('/home/ec2-user/katalist/custom-automatic/models/inf-you/', 'image_proj_model.bin')
+        image_proj_model_path = os.path.join(INFUSE_YOU_DIR, proj_model_name)
         ipm_state_dict = torch.load(image_proj_model_path, map_location="cpu")
         image_proj_model.load_state_dict(ipm_state_dict['image_proj'])
         del ipm_state_dict
@@ -126,8 +124,8 @@ class InfiniteYouApplyBeta:
                              "negative": ("CONDITIONING", ),
                              "infuse_net": ("CONTROL_NET", ),
                              "face_analysis": ("FACEANALYSIS", ),
-                             "latent_image": ("LATENT", ),
                              "ref_image": ("IMAGE", ),
+                             "proj_model_name": (folder_paths.get_filename_list("inf-you"),),
                              "strength": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01}),
                              "start_percent": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.001}),
                              "end_percent": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.001}),
@@ -186,7 +184,7 @@ class InfiniteYouApplyBeta:
     def get_face_embedding(self, ref_image, device, dtype):
         # convert BRGB to BBGR
         ref_image = tensor_to_image(ref_image)
-        self.image_proj_model = load_image_proj_model(device, dtype)
+        self.image_proj_model = load_image_proj_model(self.image_proj_model, device, dtype)
 
         face_info = self._detect_face(ref_image)
         if len(face_info) == 0:
@@ -210,18 +208,19 @@ class InfiniteYouApplyBeta:
         
         
 
-    def apply_infiniteYou(self, positive, negative, infuse_net, ref_image, face_analysis, latent_image, strength, start_percent, end_percent, vae=None, extra_concat=[], mask=None, control_image=None):
+    def apply_infiniteYou(self, positive, negative, infuse_net, ref_image, proj_model_name, face_analysis, strength, start_percent, end_percent, vae=None, extra_concat=[], mask=None, control_image=None):
 
         device = model_management.get_torch_device()
         dtype = model_management.unet_dtype()
 
         self.init_face_analysis(face_analysis)
 
+        self.image_proj_model = proj_model_name
+
         id_embed = self.get_face_embedding(ref_image, device, dtype)
         # control image is a tensor of zeros with the same 8 times width and height as the latent image
-        print(latent_image["samples"][0].shape)
         if control_image is None:
-            control_image = torch.zeros((1, latent_image["samples"][0].shape[2] * 8, latent_image["samples"][0].shape[2] * 8,3), dtype=dtype, device=device)
+            control_image = torch.zeros((1, 512, 512, 3), dtype=dtype, device=device)
         
         if strength == 0:
             return (positive, negative)
@@ -270,7 +269,7 @@ class InfiniteYouControlImagePreprocessor:
     CATEGORY = "infuse_you"
 
     def init_face_analysis(self, face_analysis):
-                # Load face encoder with multiple detection sizes
+        # Load face encoder with multiple detection sizes
         self.app_640 = face_analysis
         self.app_640.prepare(ctx_id=0, det_size=(640, 640))
 
