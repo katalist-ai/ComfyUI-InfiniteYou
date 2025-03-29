@@ -117,7 +117,7 @@ class InfiniteYouInsightFaceLoader:
 
         return (model,)
 
-class InfiniteYouApplyBeta:
+class InfiniteYouApply:
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {"positive": ("CONDITIONING", ),
@@ -226,7 +226,6 @@ class InfiniteYouApplyBeta:
             return (positive, negative)
 
         control_hint = control_image.movedim(-1,1)
-        print(control_hint.shape)
         cnets = {}
 
         out = []
@@ -324,7 +323,6 @@ class InfiniteYouControlImagePreprocessor:
         return out_img
 
     def preprocess_control_image(self, image, face_analysis):
-        print("shape of input image", image.shape)
         # tensor to image
         image = tensor_to_image(image)
         self.init_face_analysis(face_analysis)
@@ -339,13 +337,13 @@ class InfiniteYouControlImagePreprocessor:
 
 
 NODE_CLASS_MAPPINGS = {
-    "InfiniteYouApplyBeta": InfiniteYouApplyBeta,
+    "InfiniteYouApply": InfiniteYouApply,
     "InfiniteYouInsightFaceLoader": InfiniteYouInsightFaceLoader,
     "InfiniteYouControlImagePreprocessor": InfiniteYouControlImagePreprocessor,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "InfiniteYouApplyBeta": "Infinite You Apply Beta",
+    "InfiniteYouApply": "Infinite You Apply",
     "InfiniteYouInsightFaceLoader": "Infinite You Insight Face Loader",
     "InfiniteYouControlImagePreprocessor": "Infinite You Control Image Preprocessor",
 }
