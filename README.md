@@ -34,6 +34,8 @@ Then download the relevant models and place it in the appropriate folders
 
 ## Examples
 
+Note these examples are with base flux model, you can get better results by using [LoRas](https://huggingface.co/ByteDance/InfiniteYou/tree/main/supports/optional_loras) recommended by ByteDance.
+
 1. Infinite you workflow for single person identity preservation. This works really well with ability to do different styles and so far the most flexible identity preserving research.
 
 <!-- Show examples/nfinite_you.png -->
