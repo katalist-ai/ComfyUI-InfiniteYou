@@ -1,0 +1,4 @@
+insightface
+facexlib
+numpy
+opencv-python
