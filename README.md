@@ -62,9 +62,9 @@ Note these examples are with base flux model, you can get better results by usin
 
 ## Credits & Acknowledgement 
 
-This work was possible due to the open release of InfiniteYou and the strong ComfyUI community. Model weights come under creative commons license user under your own discretion.
+This work was possible due to the open release of InfiniteYou and the strong ComfyUI community. Model weights come under [Creative Commons Attribution-NonCommercial 4.0 International Public License](https://huggingface.co/ByteDance/InfiniteYou/blob/main/LICENSE) use under your own discretion.
 
 Special thanks to:
 
-- <a href="https://bytedance.github.io/InfiniteYou">ByteDance Infinite You</a> team for thsi amazing work. 
+- <a href="https://bytedance.github.io/InfiniteYou">ByteDance Infinite You</a> team for this amazing work. 
 - <a href="https://github.com/ZenAI-Vietnam/ComfyUI_InfiniteYou/tree/main">Zen AI</a> Team for uploading the weights and early implementation.
