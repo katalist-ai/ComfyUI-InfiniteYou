@@ -22,7 +22,7 @@ There are two models -
 
 Then download the relevant models and place it in the appropriate folders
 
-- Download the control net models to `\models\checkpoints\`
+- Download the control net models to `\models\controlnet\`
     - [Similarity model (control net)](https://huggingface.co/vuongminhkhoi4/ComfyUI_InfiniteYou/resolve/main/sim_stage1_control_net/sim_stage1_control_net.safetensors)
     - [Aesthetics Model (control net)](https://huggingface.co/vuongminhkhoi4/ComfyUI_InfiniteYou/resolve/main/aes_stage2_control_net/aes_stage2_control.safetensors)
 
